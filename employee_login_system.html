@@ -238,6 +238,15 @@
         const closeForgotModal = document.getElementById('closeForgotModal');
         const closeSecretModal = document.getElementById('closeSecretModal');
         
+        // 認証済み社員番号とパスワードの組み合わせ
+        const validCredentials = [
+            { employeeId: 'C202507TY', password: 'nodapass' },
+            { employeeId: 'C202507OY', password: 'nodapass' },
+            { employeeId: 'C202507SK', password: 'nodapass' },
+            { employeeId: 'C202507IH', password: 'nodapass' },
+            { employeeId: 'C202507HT', password: 'nodapass' }
+        ];
+        
         // モーダル表示/非表示関数
         function showModal(modal) {
             modal.classList.remove('hidden');
@@ -249,13 +258,28 @@
             secretAnswerError.classList.add('hidden');
         }
         
+        // ログイン認証関数
+        function isValidCredentials(employeeId, password) {
+            return validCredentials.some(credential => 
+                credential.employeeId === employeeId && credential.password === password
+            );
+        }
+        
         // メインログイン処理
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // どんな入力でもエラーを表示
-            loginError.classList.remove('hidden');
-            forgotPasswordLink.classList.remove('hidden');
+            const employeeId = document.getElementById('employeeId').value;
+            const password = document.getElementById('password').value;
+            
+            if (isValidCredentials(employeeId, password)) {
+                // 正しい認証情報の場合、指定されたURLにリダイレクト
+                window.location.href = 'https://www.n-unso.com/複製-社員ページ-1';
+            } else {
+                // 認証失敗の場合はエラーを表示
+                loginError.classList.remove('hidden');
+                forgotPasswordLink.classList.remove('hidden');
+            }
         });
         
         // パスワード忘れリンク
