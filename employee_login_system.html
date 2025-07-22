@@ -1,12 +1,3 @@
-はい、承知いたしました。提供いただいたHTMLコードを修正し、社員番号「P202304YS」でパスワード再設定フローが進むようにします。
-
-変更点は以下の通りです。
-
-1.  **パスワード忘れフォームの社員番号**：「forgotEmployeeId」の入力値が「SY2304019907」ではなく「**P202304YS**」の場合に秘密の質問モーダルが表示されるように修正します。
-
------
-
-```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -168,6 +159,7 @@
 </head>
 <body>
     <div class="container">
+        <!-- メインログイン画面 -->
         <div id="loginScreen">
             <h1>社員ページログイン</h1>
             <form id="loginForm">
@@ -193,6 +185,7 @@
         
     </div>
 
+    <!-- パスワード忘れモーダル -->
     <div id="forgotPasswordModal" class="modal hidden">
         <div class="modal-content">
             <button class="close-btn" id="closeForgotModal">&times;</button>
@@ -208,6 +201,7 @@
         </div>
     </div>
     
+    <!-- 秘密の質問モーダル -->
     <div id="secretQuestionModal" class="modal hidden">
         <div class="modal-content">
             <button class="close-btn" id="closeSecretModal">&times;</button>
@@ -276,7 +270,6 @@
             
             const employeeId = document.getElementById('forgotEmployeeId').value;
             
-            // ここをP202304YSに修正
             if (employeeId === 'P202304YS') {
                 hideModal(forgotPasswordModal);
                 showModal(secretQuestionModal);
@@ -325,4 +318,3 @@
     </script>
 </body>
 </html>
-```
