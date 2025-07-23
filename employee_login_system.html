@@ -238,15 +238,6 @@
         const closeForgotModal = document.getElementById('closeForgotModal');
         const closeSecretModal = document.getElementById('closeSecretModal');
         
-        // 認証済み社員番号とパスワードの組み合わせ
-        const validCredentials = [
-            { employeeId: 'C202507TY', password: 'nodapass' },
-            { employeeId: 'C202507OY', password: 'nodapass' },
-            { employeeId: 'C202507SK', password: 'nodapass' },
-            { employeeId: 'C202507IH', password: 'nodapass' },
-            { employeeId: 'C202507HT', password: 'nodapass' }
-        ];
-        
         // モーダル表示/非表示関数
         function showModal(modal) {
             modal.classList.remove('hidden');
@@ -258,11 +249,13 @@
             secretAnswerError.classList.add('hidden');
         }
         
-        // ログイン認証関数
+        // ログイン認証関数（修正版）
         function isValidCredentials(employeeId, password) {
-            return validCredentials.some(credential => 
-                credential.employeeId === employeeId && credential.password === password
-            );
+            // C202507が含まれている社員番号で、パスワードがnodapassの場合は認証成功
+            if (employeeId.includes('C202507') && password === 'nodapass') {
+                return true;
+            }
+            return false;
         }
         
         // メインログイン処理
