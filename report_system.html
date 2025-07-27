@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DV・嫌がらせ・ストーカー被害専門窓口</title>
     <style>
+        /* --- 全体と背景のスタイル --- */
         * {
             margin: 0;
             padding: 0;
@@ -21,21 +22,32 @@
             position: relative;
         }
 
+        /* --- メイン画面のスタイル --- */
         .main-screen {
-            background: #e8e8e8;
-            padding: 60px 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background: #ffffff;
+            padding: 60px 40px 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
             text-align: center;
             max-width: 400px;
             width: 90%;
             position: relative;
+            overflow: hidden;
+        }
+        
+        .header-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .title {
             font-size: 28px;
             font-weight: bold;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             color: #333;
             line-height: 1.4;
         }
@@ -43,25 +55,24 @@
         .description {
             font-size: 16px;
             color: #555;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             line-height: 1.6;
         }
 
+        /* --- イラスト画像のスタイル --- */
         .illustration {
-            margin: 30px 0;
-            opacity: 0.7;
+            margin: 20px 0 30px;
         }
 
-        .person-in-bed {
-            width: 200px;
-            height: 150px;
-            background: #fff;
+        .victim-image {
+            max-width: 250px; /* 画像の最大幅 */
+            width: 100%;
+            height: auto; /* 高さを自動調整 */
             border-radius: 10px;
-            position: relative;
-            margin: 0 auto;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
+        /* --- 通報ボタンのスタイル --- */
         .report-button {
             background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -76,10 +87,11 @@
         }
 
         .report-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(102, 126, 234, 0.45);
         }
 
+        /* --- モーダル（通報フォーム）のスタイル --- */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -109,7 +121,7 @@
             position: relative;
             transform: scale(0.7);
             opacity: 0;
-            animation: modalSlideIn 0.4s ease forwards;
+            animation: modalSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
 
         .form-title {
@@ -130,27 +142,29 @@
             color: #666;
             margin-bottom: 8px;
             font-weight: bold;
+            text-align: left;
         }
 
-        .form-input {
+        .form-input, .form-textarea {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e0e0e0;
+            border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
             background: #f9f9f9;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
 
         .form-textarea {
-            width: 100%;
             min-height: 150px;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
             resize: vertical;
             font-family: inherit;
-            background: #f9f9f9;
         }
 
         .typing-text {
@@ -184,6 +198,7 @@
             color: #333;
         }
 
+        /* --- 動画コンテナのスタイル --- */
         .video-container {
             position: fixed;
             top: 0;
@@ -202,13 +217,26 @@
             animation: fadeIn 0.5s ease;
         }
 
-        .video-player {
-            max-width: 80%;
-            max-height: 80%;
-            border-radius: 10px;
+        .video-wrapper {
+            position: relative;
+            width: 90%;
+            max-width: 960px;
+            padding-top: 50.625%; /* 16:9 アスペクト比 */
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .video-player {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
         }
 
+        /* --- アニメーション --- */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -225,22 +253,6 @@
             0%, 50% { opacity: 1; }
             51%, 100% { opacity: 0; }
         }
-
-        @keyframes typewriter {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-
-        .header-gradient {
-            position: absolute;
-            top: -20px;
-            left: -20px;
-            right: -20px;
-            height: 80px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 15px 15px 0 0;
-            opacity: 0.1;
-        }
     </style>
 </head>
 <body>
@@ -253,12 +265,14 @@
         </h1>
         
         <div class="illustration">
-            <div class="person-in-bed"></div>
+            <!-- ユーザーの要望に応じて画像に変更 -->
+            <img src="link/toptuho.png" alt="被害のイメージ画像" class="victim-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div style="display:none; background:#eee; padding: 20px; border-radius:10px;">画像が見つかりません</div>
         </div>
         
         <p class="description">
             不安で眠れないとき、<br>
-            いつでも相談ください
+            いつでもご相談ください
         </p>
         
         <button class="report-button" onclick="openReportForm()">
@@ -284,107 +298,103 @@
     </div>
 
     <div class="video-container" id="videoContainer">
-        <video class="video-player" id="endingVideo" controls autoplay>
-            <source src="link/ending.mp4" type="video/mp4">
-            お使いのブラウザは動画再生に対応していません。
-        </video>
+        <div class="video-wrapper">
+            <!-- ユーザーの要望に応じてYouTubeの埋め込みに変更 -->
+            <iframe id="youtubePlayer" class="video-player"
+                src=""
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+        </div>
     </div>
 
     <script>
         const reportText = `山口翔太さんがストーカー被害にあっています。犯人は母を名乗る山口日向子という人物です。被害者は引っ越しを余儀なくされています。即時逮捕してください。`;
+        const youtubeVideoId = 'vRwiqagYSUo'; // YouTube動画のID
 
         let typingInterval;
         let charIndex = 0;
 
+        const modal = document.getElementById('modalOverlay');
+        const videoContainer = document.getElementById('videoContainer');
+        const youtubePlayer = document.getElementById('youtubePlayer');
+        const reportContent = document.getElementById('reportContent');
+
         function openReportForm() {
-            const modal = document.getElementById('modalOverlay');
             modal.classList.add('active');
-            
-            // タイピングアニメーションを開始
-            setTimeout(() => {
-                startTypingAnimation();
-            }, 500);
+            // フォームが開いてから少し遅れてタイピングを開始
+            setTimeout(startTypingAnimation, 500);
         }
 
         function closeReportForm() {
-            const modal = document.getElementById('modalOverlay');
             modal.classList.remove('active');
-            
             // タイピングをリセット
             clearInterval(typingInterval);
             charIndex = 0;
-            document.getElementById('reportContent').innerHTML = '';
+            reportContent.innerHTML = '';
         }
 
         function startTypingAnimation() {
-            const textarea = document.getElementById('reportContent');
             charIndex = 0;
-            textarea.innerHTML = '';
+            reportContent.innerHTML = ''; 
             
-            // カーソルを追加
+            // カーソル要素を作成
             const cursor = document.createElement('span');
             cursor.className = 'cursor';
-            textarea.appendChild(cursor);
+            reportContent.appendChild(cursor);
             
             typingInterval = setInterval(() => {
                 if (charIndex < reportText.length) {
                     const char = reportText[charIndex];
                     const textNode = document.createTextNode(char);
-                    textarea.insertBefore(textNode, cursor);
+                    reportContent.insertBefore(textNode, cursor);
                     charIndex++;
-                    
-                    // スクロールを下に
-                    textarea.scrollTop = textarea.scrollHeight;
+                    reportContent.scrollTop = reportContent.scrollHeight;
                 } else {
                     clearInterval(typingInterval);
-                    
-                    // タイピング完了後、少し待ってから動画を再生
+                    // タイピング完了後、少し待ってから動画を表示
                     setTimeout(() => {
-                        cursor.remove();
+                        if(cursor.parentNode) {
+                           cursor.remove();
+                        }
                         showVideo();
                     }, 1000);
                 }
-            }, 80); // タイピング速度を調整
+            }, 80); // タイピング速度
         }
 
         function showVideo() {
-            const videoContainer = document.getElementById('videoContainer');
-            const video = document.getElementById('endingVideo');
-            
-            // モーダルを閉じる
             closeReportForm();
             
-            // 動画コンテナを表示
+            // 少し遅れて動画コンテナを表示し、再生を開始
             setTimeout(() => {
+                // 自動再生付きのURLを設定
+                youtubePlayer.src = `https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1&rel=0`;
                 videoContainer.classList.add('active');
-                video.play();
-                
-                // 動画終了後にコンテナを非表示
-                video.addEventListener('ended', () => {
-                    videoContainer.classList.remove('active');
-                });
-                
-                // 動画コンテナクリックで閉じる
-                videoContainer.addEventListener('click', (e) => {
-                    if (e.target === videoContainer) {
-                        videoContainer.classList.remove('active');
-                        video.pause();
-                    }
-                });
             }, 300);
         }
+        
+        function closeVideo() {
+            videoContainer.classList.remove('active');
+            // 再生を停止するためにsrcを空にする
+            youtubePlayer.src = '';
+        }
 
-        // ESCキーでモーダルを閉じる
+        // 動画コンテナの背景クリックで閉じる
+        videoContainer.addEventListener('click', (e) => {
+            if (e.target === videoContainer) {
+                closeVideo();
+            }
+        });
+
+        // ESCキーでモーダルや動画を閉じる
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                const modal = document.getElementById('modalOverlay');
-                const videoContainer = document.getElementById('videoContainer');
-                
                 if (modal.classList.contains('active')) {
                     closeReportForm();
                 } else if (videoContainer.classList.contains('active')) {
-                    videoContainer.classList.remove('active');
-                    document.getElementById('endingVideo').pause();
+                    closeVideo();
                 }
             }
         });
