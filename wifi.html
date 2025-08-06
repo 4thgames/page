@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wi-Fi接続サポートチャット</title>
+    <!-- Tailwind CSSを読み込み -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ReactとReactDOMを読み込み -->
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <!-- JSXをブラウザで変換するためのBabelを読み込み -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        /* フォントを適用 */
+        body {
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <!-- Reactコンポーネントが描画されるルート要素 -->
+    <div id="root"></div>
+
+    <!-- Reactコンポーネントのコード -->
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        /**
+         * Wi-Fi接続をテーマにした、誕生日サプライズ機能付きのチャットUIコンポーネント
+         */
+        function WiFiChatUI() {
+            // 現在表示しているチャットノードのIDを管理するstate
+            const [currentNode, setCurrentNode] = useState('intro');
+            // 誕生日のお祝いエフェクトを表示するかどうかのフラグ
+            const [showCelebration, setShowCelebration] = useState(false);
+
+            // チャットのシナリオデータ
+            const chatData = {
+                title: "Wi-Fi接続サポートチャット：あなたは何者？",
+                nodes: [
+                    {
+                        id: "intro",
+                        type: "message",
+                        text: "AIチャット「こんにちは、Wi-Fi接続にお困りですか？」",
+                        options: [
+                            { text: "はい、接続方法を教えてください", next_id: "support_start" },
+                            { text: "いや、ちょっと様子を見てるだけ", next_id: "casual_chat" }
+                        ]
+                    },
+                    {
+                        id: "support_start",
+                        type: "message",
+                        text: "AIチャット「接続には認証が必要です。お名前とメールアドレスを教えていただけますか？」",
+                        options: [
+                            { text: "本名と会社のアドレスを入力", next_id: "formal_auth" },
+                            { text: "仮名で適当に答える", next_id: "fake_auth" }
+                        ]
+                    },
+                    {
+                        id: "casual_chat",
+                        type: "message",
+                        text: "AIチャット「なるほど。じゃあ少しだけ雑談でもどうですか？」",
+                        options: [
+                            { text: "最近ハマってる飲み物は？", next_id: "casual_continue" },
+                            { text: "好きな音楽は？", next_id: "casual_continue" }
+                        ]
+                    },
+                    {
+                        id: "casual_continue",
+                        type: "message",
+                        text: "AIチャット「そういえば、○○さんって8月生まれでしたよね？」",
+                        options: [
+                            { text: "なんで知ってるの？", next_id: "birthday" },
+                            { text: "もしかして、これは誕生日ドッキリ…？", next_id: "birthday" }
+                        ]
+                    },
+                    {
+                        id: "formal_auth",
+                        type: "message",
+                        text: "AIチャット「ありがとうございます。あとは接続を試すだけですね！…ところで、○○さん、8月生まれでしたよね？」",
+                        options: [
+                            { text: "えっ、なんで誕生日知ってるの？", next_id: "birthday" },
+                            { text: "気のせいです", next_id: "birthday" }
+                        ]
+                    },
+                    {
+                        id: "fake_auth",
+                        type: "message",
+                        text: "AIチャット「\"名無しのゴンベエ\"さんですね、了解です。でも…本当は○○さんじゃないですか？8月生まれの。」",
+                        options: [
+                            { text: "……なぜ分かった？", next_id: "birthday" }
+                        ]
+                    },
+                    {
+                        id: "birthday",
+                        type: "message",
+                        text: "🎂 AIチャット「Happy Birthday, ○○さん！」 🎉\n画面全体にバーチャルケーキ、風船、メッセージカードが表示される。\n「あなたを忘れない、特別なAIサポートより」",
+                        options: [
+                            { text: "祝われて照れる", next_id: "end_shy" },
+                            { text: "誰が仕組んだか問い詰める", next_id: "end_mystery" }
+                        ]
+                    },
+                    {
+                        id: "end_shy",
+                        type: "ending",
+                        text: "あなたは照れながら笑顔でケーキのアニメーションを見る。\n今日がちょっとだけ特別な日になった。"
+                    },
+                    {
+                        id: "end_mystery",
+                        type: "ending",
+                        text: "チャットは突然終了する。\n画面に残るのは一言──「また、来年もお待ちしています。」"
+                    }
+                ]
+            };
+
+            /**
+             * showCelebrationフラグがtrueになった時に副作用を実行する
+             * お祝いエフェクトを表示した0.5秒後に、誕生日ノードに遷移させる
+             */
+            useEffect(() => {
+                let timer;
+                if (showCelebration) {
+                    timer = setTimeout(() => {
+                        setCurrentNode('birthday');
+                    }, 500);
+                }
+                // クリーンアップ関数: コンポーネントがアンマウントされるか、
+                // 依存関係(showCelebration)が変更される前にタイマーをクリアする
+                return () => clearTimeout(timer);
+            }, [showCelebration]);
+
+            // 現在のノードIDに基づいてノードデータを取得する
+            const nodeData = chatData.nodes.find(node => node.id === currentNode);
+
+            /**
+             * 選択肢がクリックされたときの処理
+             * @param {string} nextId - 次に表示するノードのID
+             */
+            function handleOptionClick(nextId) {
+                if (nextId === 'birthday') {
+                    // お祝いフラグを立てる。実際のノード遷移はuseEffectに任せる
+                    setShowCelebration(true);
+                } else {
+                    setCurrentNode(nextId);
+                }
+            }
+
+            /**
+             * チャットを初期状態にリセットする
+             */
+            function resetChat() {
+                setCurrentNode('intro');
+                setShowCelebration(false);
+            }
+
+            // 現在のノードが誕生日ノードか、エンディングノードかの判定フラグ
+            const isBirthdayNode = currentNode === 'birthday';
+            const isEndingNode = nodeData && nodeData.type === 'ending';
+
+            // 紙吹雪エフェクト用の要素を生成する
+            const confettiItems = [];
+            if (showCelebration) {
+                // 紙吹雪の数を30個に増やして華やかに
+                for (let i = 0; i < 30; i++) {
+                    const emojis = ['🎉', '🎂', '🎈', '✨', '🎊'];
+                    confettiItems.push(
+                        <div
+                            key={`confetti-${i}`} // より安定したユニークなkey
+                            className="absolute animate-bounce text-2xl"
+                            style={{
+                                left: `${Math.random() * 100}%`,
+                                top: `${Math.random() * 100}%`,
+                                animationDelay: `${Math.random() * 2}s`
+                            }}
+                        >
+                            {emojis[Math.floor(Math.random() * emojis.length)]}
+                        </div>
+                    );
+                }
+            }
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 relative overflow-hidden">
+                    {/* お祝いエフェクト用のコンテナ */}
+                    {showCelebration && (
+                        <div className="fixed inset-0 z-50 pointer-events-none">
+                            {confettiItems}
+                        </div>
+                    )}
+
+                    <div className="max-w-2xl mx-auto">
+                        {/* ヘッダー */}
+                        <div className="bg-white rounded-t-lg shadow-lg p-6 border-b-2 border-blue-200">
+                            <h1 className="text-2xl font-bold text-gray-800 text-center">
+                                {chatData.title}
+                            </h1>
+                        </div>
+
+                        {/* メインのチャット表示エリア */}
+                        <div className={`bg-white shadow-lg min-h-96 p-6 transition-all duration-500 ${
+                            isBirthdayNode ? 'bg-gradient-to-br from-pink-50 to-yellow-50' : ''
+                            } ${isEndingNode ? 'rounded-b-lg' : ''}`}>
+                            
+                            {/* AIからのメッセージ */}
+                            <div className={`mb-6 p-4 rounded-lg transition-all duration-500 ${
+                                isBirthdayNode 
+                                ? 'bg-gradient-to-r from-pink-100 to-yellow-100 border-2 border-pink-200 shadow-lg' 
+                                : 'bg-gray-50 border border-gray-200'
+                            }`}>
+                                <div className={`text-lg whitespace-pre-line ${
+                                isBirthdayNode ? 'text-center font-semibold text-pink-800' : 'text-gray-800'
+                                }`}>
+                                {nodeData && nodeData.text}
+                                </div>
+                                
+                                {/* 誕生日ノード専用の絵文字アニメーション */}
+                                {isBirthdayNode && (
+                                <div className="mt-4 flex justify-center items-center space-x-4">
+                                    <div className="text-4xl animate-bounce" style={{animationDelay: '0.1s'}}>🎂</div>
+                                    <div className="text-4xl animate-bounce" style={{animationDelay: '0.2s'}}>🎈</div>
+                                    <div className="text-4xl animate-bounce" style={{animationDelay: '0.3s'}}>🎉</div>
+                                </div>
+                                )}
+                            </div>
+
+                            {/* ユーザーの選択肢 */}
+                            {nodeData && nodeData.options && (
+                                <div className="space-y-3">
+                                {nodeData.options.map((option, index) => (
+                                    <button
+                                    key={index}
+                                    onClick={() => handleOptionClick(option.next_id)}
+                                    className={`w-full p-4 rounded-lg text-left transition-all duration-300 transform hover:scale-105 hover:shadow-md font-medium ${
+                                        isBirthdayNode
+                                        ? 'bg-gradient-to-r from-purple-100 to-pink-100 border-2 border-purple-200 hover:from-purple-200 hover:to-pink-200 text-purple-800'
+                                        : 'bg-blue-50 border border-blue-200 hover:bg-blue-100 text-blue-800'
+                                    }`}
+                                    >
+                                    {option.text}
+                                    </button>
+                                ))}
+                                </div>
+                            )}
+
+                            {/* エンディングメッセージ */}
+                            {isEndingNode && (
+                                <div className="mt-6 text-center">
+                                <div className="text-gray-600 mb-6 italic text-lg">
+                                    {nodeData.text}
+                                </div>
+                                <button
+                                    onClick={resetChat}
+                                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300 transform hover:scale-105"
+                                >
+                                    最初からやり直す
+                                </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* フッターのリセットボタン */}
+                        {!isEndingNode && (
+                        <div className="bg-gray-100 rounded-b-lg shadow-lg p-4 text-center">
+                            <button
+                            onClick={resetChat}
+                            className="text-gray-500 hover:text-gray-700 text-sm transition-colors duration-300"
+                            >
+                            リセット
+                            </button>
+                        </div>
+                        )}
+                    </div>
+
+                    {/* 背景のWi-Fiアイコン */}
+                    <div className="fixed bottom-4 right-4 opacity-20">
+                        <div className="animate-pulse">
+                        <div className="w-12 h-12 text-blue-300 text-4xl">📶</div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Reactコンポーネントを #root 要素に描画
+        ReactDOM.render(<WiFiChatUI />, document.getElementById('root'));
+    </script>
+</body>
+</html>
